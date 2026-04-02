@@ -2,26 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --font-inter: 'Inter', sans-serif;
   }
-}
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #F4FAF9; /* Nordic Ice */
+    color: #121E26; /* Nordic Midnight */
+    font-family: var(--font-inter), sans-serif;
+    letter-spacing: -0.015em;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: #7E94A8; /* Nordic Steel */
+    color: white;
+  }
+
+  /* Remove any purple/dark browser defaults on links */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Clean focus styles */
+  *:focus-visible {
+    outline: 2px solid #7E94A8;
+    outline-offset: 2px;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .font-sans {
+    font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 }
