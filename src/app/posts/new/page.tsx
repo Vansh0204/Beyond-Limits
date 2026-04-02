@@ -13,7 +13,36 @@ export default function NewPostPage() {
   const [body, setBody] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleFileUpload = async (file: File) => {
+    setUploading(true);
+    setError(null);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `covers/${fileName}`;
+
+      const { data, error: uploadError } = await supabase.storage
+        .from('blog_images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('blog_images')
+        .getPublicUrl(filePath);
+
+      setImageUrl(publicUrl);
+    } catch (err: any) {
+      console.error('Error uploading image:', err);
+      setError(err.message || 'Failed to upload image. Ensure a "blog_images" bucket exists in your Supabase storage.');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     if (!authLoading && (!user || (user.role !== 'author' && user.role !== 'admin'))) {
@@ -91,15 +120,62 @@ export default function NewPostPage() {
                   />
                </div>
 
-               <div>
-                  <label className="block text-sm font-black text-gray-900 mb-4 tracking-wide uppercase">Cover Image URL (Optional)</label>
-                  <input 
-                    type="url" 
-                    className="w-full px-6 py-4 rounded-3xl border border-gray-200 outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-600 transition-all font-medium text-gray-700 bg-white"
-                    placeholder="https://images.unsplash.com/..."
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                  />
+               <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[10px] font-black text-[#7E94A8] tracking-[0.2em] uppercase ml-1">Cover Image</label>
+                    <span className="text-[10px] font-black text-gray-300 uppercase italic">URL or Local File</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="relative group">
+                      <input 
+                        type="url" 
+                        className="w-full px-6 py-4 rounded-3xl border-2 border-[#CAD3D7] outline-none focus:border-[#7E94A8] transition-all font-medium text-[#121E26] bg-white placeholder:text-gray-300 shadow-sm"
+                        placeholder="Paste image URL here..."
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                      />
+                      <div className="absolute right-6 top-1/2 -translate-y-1/2 text-[9px] font-black text-gray-200 uppercase tracking-tighter pointer-events-none group-focus-within:opacity-0 transition-opacity">External Link</div>
+                    </div>
+
+                    <div className="relative overflow-hidden rounded-3xl border-2 border-dashed border-[#CAD3D7] bg-[#F4FAF9] group hover:border-[#7E94A8] transition-all flex items-center justify-center min-h-[64px]">
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleFileUpload(file);
+                        }}
+                        className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                        disabled={uploading}
+                      />
+                      <div className="flex items-center gap-3 px-6">
+                        {uploading ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-[#7E94A8] border-t-transparent animate-spin rounded-full"></div>
+                            <span className="text-[10px] font-black text-[#7E94A8] uppercase tracking-widest">Optimizing...</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-5 h-5 text-[#7E94A8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                            <span className="text-[10px] font-black text-[#7E94A8] uppercase tracking-widest group-hover:text-[#121E26] transition-colors">Upload from Device</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  {imageUrl && (
+                    <div className="relative aspect-[21/9] w-full rounded-2xl overflow-hidden border border-[#CAD3D7] bg-gray-50">
+                       <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                       <button 
+                        type="button" 
+                        onClick={() => setImageUrl('')}
+                        className="absolute top-2 right-2 w-8 h-8 bg-black/60 backdrop-blur-md rounded-full text-white flex items-center justify-center hover:bg-black transition-all"
+                       >
+                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                       </button>
+                    </div>
+                  )}
                </div>
 
                <div>
