@@ -87,7 +87,7 @@ function AuthorDashboard({ user }: { user: any }) {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="flex items-center gap-5">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-earth-gold to-earth-brown flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-earth-gold/20">
+              <div className="w-16 h-16 rounded-2xl bg-[#121E26] flex items-center justify-center text-white text-2xl font-black shadow-xl shadow-[#121E26]/10">
                 {user.name?.[0]?.toUpperCase()}
               </div>
               <div>
@@ -200,7 +200,7 @@ function ViewerDashboard({ user }: { user: any }) {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="flex items-center gap-5">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-indigo-200">
+              <div className="w-16 h-16 rounded-2xl bg-[#7E94A8] flex items-center justify-center text-white text-2xl font-black shadow-xl shadow-[#7E94A8]/10">
                 {user.name?.[0]?.toUpperCase()}
               </div>
               <div>
@@ -449,8 +449,12 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && user && user.role === 'viewer') {
-      router.replace('/posts');
+    if (!loading && user) {
+      if (user.role === 'viewer') {
+        router.replace('/posts');
+      } else if (user.role === 'admin') {
+        router.replace('/admin');
+      }
     }
   }, [user, loading, router]);
 
