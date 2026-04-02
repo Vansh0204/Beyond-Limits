@@ -40,12 +40,7 @@ export default function Navbar() {
               Beyond Limits
             </Link>
             <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-gray-400">
-              {user?.role !== 'viewer' && (
-                <>
-                  <Link href="/" className="hover:text-[#7E94A8] transition-colors">Home</Link>
-                  <Link href="/posts" className="hover:text-[#7E94A8] transition-colors">Explore</Link>
-                </>
-              )}
+              <Link href="/posts" className="hover:text-[#7E94A8] transition-colors">Explore</Link>
               {user?.role === 'admin' && (
                 <Link href="/admin" className="hover:text-[#7E94A8] transition-colors">Dashboard</Link>
               )}
