@@ -70,5 +70,11 @@ The integration with the **Google Gemini Pro** model is designed for zero-waste 
 3. **Reverse Proxy:** Configure Nginx server block targeting port `3000`.
 4. **SSL:** Enable HTTPS via Certbot.
 
+## Admin Access
+
+| Email | Password |
+| :--- | :--- |
+| vansh65ag@gmail.com | 12345678 |
+
 ---
 *Beyond Limits — Built for boundless exploration.* 🏛️❄️
